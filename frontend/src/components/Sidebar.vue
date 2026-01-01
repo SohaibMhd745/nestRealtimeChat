@@ -32,6 +32,8 @@
       }
     }
   );
+  const publicRooms = computed(() => store.state.rooms.filter((r) => !r.isPrivate));
+  const privateRooms = computed(() => store.state.rooms.filter((r) => r.isPrivate));
 </script>
 
 <template>
@@ -51,15 +53,32 @@
     </div>
 
     <div class="rooms">
-      <div
-        v-for="room in store.state.rooms"
-        :key="room.id"
-        class="room"
-        :class="{ 'room-active': store.state.currentRoomId === room.id }"
-        @click="joinRoom(room.id)"
-      >
-        <span>#</span>
-        <p>{{ room.name }}</p>
+      <div v-if="publicRooms.length > 0" class="rooms-section">
+        <div class="section-header">Public rooms</div>
+        <div
+          v-for="room in publicRooms"
+          :key="room.id"
+          class="room"
+          :class="{ 'room-active': store.state.currentRoomId === room.id }"
+          @click="joinRoom(room.id)"
+        >
+          <span>#</span>
+          <p>{{ room.name }}</p>
+        </div>
+      </div>
+
+      <div v-if="privateRooms.length > 0" class="rooms-section">
+        <div class="section-header">Private rooms</div>
+        <div
+          v-for="room in privateRooms"
+          :key="room.id"
+          class="room"
+          :class="{ 'room-active': store.state.currentRoomId === room.id }"
+          @click="joinRoom(room.id)"
+        >
+          <span>#</span>
+          <p>{{ room.name }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -98,8 +117,33 @@
   .rooms {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     margin-top: 8px;
+  }
+
+  .rooms-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .section-header {
+    font-size: 8px;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--dark-gray);
+    opacity: 0.2;
   }
 
   .room {
