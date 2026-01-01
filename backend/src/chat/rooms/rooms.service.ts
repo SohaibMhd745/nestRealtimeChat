@@ -77,7 +77,6 @@ export class RoomsService {
       throw new Error('User not found');
     }
 
-    // Check if user is already in room
     const alreadyIn = room.users.some((u) => u.id === userToAdd.id);
     if (alreadyIn) {
       throw new ConflictException('User is already in the room');

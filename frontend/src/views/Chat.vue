@@ -21,7 +21,7 @@
 
     for (const message of messages.value) {
       const senderName = message.sender ? message.sender.username : '???';
-      const senderColor = message.sender ? message.sender.color : '#000000'; // Default to black if no color
+      const senderColor = message.sender ? message.sender.color : '#000000';
 
       if (lastGroup && lastGroup.senderName === senderName) {
         lastGroup.messages.push(message);

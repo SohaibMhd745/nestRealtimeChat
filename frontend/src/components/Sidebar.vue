@@ -3,15 +3,13 @@
   import { store } from '../store';
 
   const newRoomName = ref('');
-  const isPrivate = ref(false);
 
   const username = computed(() => store.state.user.username);
   const isAuthenticated = computed(() => !!store.state.user.token);
 
-  const createRoom = async () => {
-    await store.createRoom(newRoomName.value, isPrivate.value);
+  const createRoom = async (isPrivate) => {
+    await store.createRoom(newRoomName.value, isPrivate);
     newRoomName.value = '';
-    isPrivate.value = false;
   };
 
   const joinRoom = (roomId) => {
@@ -45,11 +43,8 @@
 
     <div v-if="isAuthenticated" class="create-room">
       <input type="text" v-model="newRoomName" placeholder="New room" />
-      <div class="private-toggle">
-        <input type="checkbox" v-model="isPrivate" />
-        <label>Private room</label>
-      </div>
-      <button @click="createRoom">Create room</button>
+      <button @click="createRoom(false)">Create public room</button>
+      <button @click="createRoom(true)" class="private-button">Create private room</button>
     </div>
 
     <div class="rooms">
@@ -107,13 +102,6 @@
     gap: 8px;
   }
 
-  .private-toggle {
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
   .rooms {
     display: flex;
     flex-direction: column;
@@ -167,5 +155,10 @@
   .room span {
     opacity: 0.8;
     font-size: 12px;
+  }
+
+  button.private-button {
+    background-color: var(--dark-gray);
+    color: white;
   }
 </style>

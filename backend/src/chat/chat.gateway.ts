@@ -30,21 +30,6 @@ export class ChatGateway {
     @MessageBody() roomId: number,
     @ConnectedSocket() client: Socket,
   ) {
-    // In a real app we should verify valid jwt here or in a guard,
-    // AND verify if user has access to this room if private.
-    // However, the gateway doesn't easily have access to the user ID unless we decode the token again or passed it.
-    // The previous implementation didn't seem to enforce auth in gateway explicitly for join.
-    // BUT, the client.join() works. To query messages we use chatService.
-    // Let's rely on ChatService to check permissions or just do it here if we can.
-    // The client probably sent a token in handshake or we can trust for now if endpoints are secured.
-    // BUT requirements say "socket logic to restrict access".
-    // We should probably rely on the room joining to be gated.
-    // For now, I will add a check using RoomsService (which I need to inject or use ChatService acting as facade).
-    // ChatService needs `canJoinRoom` method?
-
-    // Actually, ChatService uses RoomsService? Let's check ChatService.
-
-    // For now, just logging or simpler logic:
     client.join(`room_${roomId}`);
     const messages = await this.chatService.getMessages(roomId);
     client.emit('allMessages', messages);

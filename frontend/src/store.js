@@ -51,7 +51,6 @@ const actions = {
     });
 
     socketService.on('colorChange', (payload) => {
-      // payload: { userId, color }
       if (state.user.id === payload.userId) {
         state.user.color = payload.color;
       }
@@ -83,7 +82,7 @@ const actions = {
 
       state.user.id = payload.sub;
       state.user.username = payload.username;
-      state.user.color = payload.color || '#000000'; // Assuming token might have color or default
+      state.user.color = payload.color || '#000000';
       state.user.token = token;
 
       localStorage.setItem('token', token);
