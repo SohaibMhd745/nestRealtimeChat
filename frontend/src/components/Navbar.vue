@@ -22,19 +22,22 @@
 <template>
   <div class="navbar">
     <nav>
-      <p v-if="isAuthenticated" @click="router.push('/')">Chat</p>
-      <p v-if="!isAuthenticated" @click="router.push('/login')">Login</p>
-      <p v-if="!isAuthenticated" @click="router.push('/register')">Register</p>
-      <p v-if="isAuthenticated" @click="logout">Logout</p>
-      <div v-if="isAuthenticated" class="color-picker">
-        <label for="color">Change color</label>
-        <input
-          type="color"
-          id="color"
-          :value="store.state.user.color || '#000000'"
-          @change="updateColor"
-        />
+      <div class="nav-links">
+        <p v-if="!isAuthenticated" @click="router.push('/login')">Login</p>
+        <p v-if="!isAuthenticated" @click="router.push('/register')">Register</p>
+
+        <div v-if="isAuthenticated" class="color-picker">
+          <label for="color">Change color</label>
+          <input
+            type="color"
+            id="color"
+            :value="store.state.user.color || '#000000'"
+            @change="updateColor"
+          />
+        </div>
       </div>
+
+      <p v-if="isAuthenticated" @click="logout">Logout</p>
     </nav>
   </div>
 </template>
@@ -51,8 +54,15 @@
   nav {
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: space-between;
     padding: 0 36px;
+    width: 100%;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
   }
 
   nav p {
@@ -63,6 +73,5 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
   }
 </style>
