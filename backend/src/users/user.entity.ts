@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Room } from '../chat/rooms/room.entity';
 
 @Entity()
 export class User {
@@ -10,4 +11,10 @@ export class User {
 
   @Column()
   passwordHash: string;
+
+  @Column({ default: '#000000' })
+  color: string;
+
+  @ManyToMany(() => Room, (room) => room.users)
+  rooms: Room[];
 }
