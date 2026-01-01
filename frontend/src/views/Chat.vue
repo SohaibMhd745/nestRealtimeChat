@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, watch, nextTick } from 'vue';
   import { useRouter } from 'vue-router';
   import { store } from '../store';
   import socketService from '../services/socket';
@@ -41,6 +41,23 @@
     return groups;
   });
 
+  const messagesContainer = ref(null);
+
+  const scrollToBottom = async () => {
+    await nextTick();
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+  };
+
+  watch(
+    messages,
+    () => {
+      scrollToBottom();
+    },
+    { deep: true, immediate: true }
+  );
+
   const messageInput = ref('');
   const textareaRef = ref(null);
 
@@ -69,7 +86,7 @@
     clearTimeout(typingTimeout);
     typingTimeout = setTimeout(() => {
       handleTyping(false);
-    }, 1000);
+    }, 2500);
   };
 
   const sendMessage = () => {
@@ -129,7 +146,7 @@
       </div>
     </div>
 
-    <div class="messages-container">
+    <div ref="messagesContainer" class="messages-container">
       <div v-for="group in groupedMessages" :key="group.id" class="message-group">
         <div class="message-header">
           <span class="sender" :style="{ color: group.senderColor }">{{ group.senderName }}</span>
@@ -150,11 +167,10 @@
       </div>
     </div>
 
-    <div v-if="Object.keys(typingUsers).length > 0" class="typing-indicator">
-      Users typing: {{ Object.keys(typingUsers).join(', ') }}
-    </div>
-
     <div class="input-container">
+      <div v-if="Object.keys(typingUsers).length > 0" class="typing-indicator">
+        Users typing: {{ Object.keys(typingUsers).join(', ') }}
+      </div>
       <textarea
         ref="textareaRef"
         v-model="messageInput"
@@ -190,11 +206,46 @@
     flex-direction: column;
   }
 
+  .chat-header {
+    height: 42px;
+    border-bottom: 1px solid var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+  }
+
+  .room-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .invite-input {
+    display: flex;
+    gap: 4px;
+  }
+
+  .invite-input input {
+    padding: 4px 8px;
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+  }
+
+  .cancel-button {
+    background-color: #666;
+  }
+
   .messages-container {
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin: 0px 32px 20px 32px;
+    margin: 12px 32px 32px 32px;
     gap: 16px;
     overflow-y: auto;
   }
@@ -227,10 +278,13 @@
   }
 
   .typing-indicator {
-    margin: 0px 32px 12px;
+    position: absolute;
+    top: -20px;
+    left: 0;
     font-size: 12px;
     font-weight: 400;
     color: var(--dark-gray);
+    pointer-events: none;
   }
 
   .input-container {
@@ -241,6 +295,7 @@
     margin: 0 32px 20px;
     border-radius: 12px;
     border: 1px solid var(--gray);
+    position: relative;
   }
 
   .input-container textarea {
@@ -266,41 +321,5 @@
     font-size: 11px;
     padding: 6px 12px;
     border-radius: 999px;
-  }
-
-  .chat-header {
-    height: 42px;
-    border-bottom: 1px solid var(--gray);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    margin-bottom: 20px;
-  }
-
-  .room-info {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .room-actions {
-    display: flex;
-    align-items: center;
-  }
-
-  .invite-input {
-    display: flex;
-    gap: 4px;
-  }
-
-  .invite-input input {
-    padding: 4px 8px;
-    border: 1px solid var(--gray);
-    border-radius: 4px;
-  }
-
-  .cancel-button {
-    background-color: #666;
   }
 </style>
